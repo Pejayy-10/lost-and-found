@@ -1,35 +1,29 @@
 <?php
-// Start session
-session_start();
+// admin-dashboard.php
 
-// Check if the user is logged in and is an admin
+// Start session and check if the user is logged in and an admin
+session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    // If not, redirect to login page
     header('Location: ../auth/login.php');
     exit();
 }
 
-// Admin Dashboard content here
+require_once 'includes/_header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <h1>Welcome to the Admin Dashboard</h1>
-        <!-- Admin content goes here -->
-    </div>
 
-    <div class="logout-button"></div>
-        <form action="../auth/logout.php" method="post">
-            <button type="submit">Logout</button>
-        </form>
+<body id="dashboard">
+    <div class="wrapper">
+        <?php
+        require_once 'includes/_navbar.php';
+        require_once 'includes/_sidebar.php';
+        ?>
+        <div class="content-page px-3">
+            <!-- dynamic content here -->
+        </div>
     </div>
-    
+    <?php
+    require_once 'includes/_footer.php';
+    ?>
 </body>
+
 </html>
