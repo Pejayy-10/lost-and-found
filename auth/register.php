@@ -5,12 +5,12 @@ require_once '../config/database.php'; // Include the DB connection
 // Handle the registration via AJAX
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
+    $email = $_POST['email'];
     $password = $_POST['password'];
     $password2 = $_POST['password2'];
-    $contact_number = $_POST['contact_number'];
 
     // Validate form inputs
-    if (empty($username) || empty($password) || empty($password2) || empty($contact_number)) {
+    if (empty($username) || empty($email) || empty($password) || empty($password2)) {
         echo json_encode(['status' => 'error', 'message' => 'Please fill in all fields.']);
         exit;
     } elseif ($password !== $password2) {
@@ -20,17 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode(['status' => 'error', 'message' => 'Password must be at least 6 characters long.']);
         exit;
     } else {
-        // Check if username already exists
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
-        $stmt->execute(['username' => $username]);
+        // Check if username or email already exists
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
+        $stmt->execute(['username' => $username, 'email' => $email]);
         if ($stmt->fetch()) {
-            echo json_encode(['status' => 'error', 'message' => 'Username already exists.']);
+            echo json_encode(['status' => 'error', 'message' => 'Username or email already exists.']);
             exit;
         } else {
             // Insert new user into database
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (username, password, contact_number) VALUES (?, ?, ?)");
-            $stmt->execute([$username, $hashed_password, $contact_number]);
+            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 'user')");
+            $stmt->execute([$username, $email, $hashed_password]);
 
             // Return success
             echo json_encode(['status' => 'success', 'message' => 'Registration successful!', 'redirect' => 'login.php']);
@@ -61,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <form id="register-form">
             <input type="text" class="form-control" name="username" id="username" placeholder="Username" required>
+            <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
             <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
             <input type="password" class="form-control" name="password2" id="password2" placeholder="Confirm Password" required>
-            <input type="text" class="form-control" name="contact_number" id="contact_number" placeholder="Contact Number" required>
 
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
@@ -83,15 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $('#register-form').on('submit', function(e) {
     e.preventDefault(); // Prevent form submission
     const username = $('#username').val();
+    const email = $('#email').val();
     const password = $('#password').val();
     const password2 = $('#password2').val();
-    const contact_number = $('#contact_number').val();
 
     // AJAX request
     $.ajax({
         url: 'register.php',
         type: 'POST',
-        data: { username: username, password: password, password2: password2, contact_number: contact_number },
+        data: { username: username, email: email, password: password, password2: password2 },
         dataType: 'json',
         success: function(response) {
             if (response.status === 'success') {

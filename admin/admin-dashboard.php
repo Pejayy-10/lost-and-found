@@ -5,7 +5,7 @@ session_start();
 // Check if the user is logged in and is an admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     // If not, redirect to login page
-    header('Location: /login.php');
+    header('Location: ../auth/login.php');
     exit();
 }
 
@@ -24,5 +24,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         <h1>Welcome to the Admin Dashboard</h1>
         <!-- Admin content goes here -->
     </div>
+
+    <div class="logout-button"></div>
+        <form action="../auth/logout.php" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+    
 </body>
 </html>

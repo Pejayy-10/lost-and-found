@@ -1,5 +1,17 @@
 <?php
 session_start();
+
+if (isset($_SESSION['user_id'])) {
+    $role = $_SESSION['role']; // You may store role in session too
+    if ($role == 'admin') {
+        header('Location: ../admin/admin-dashboard.php');  // Redirect admin to their dashboard
+        exit();
+    } else {
+        header('Location: ../user/home.php');  // Redirect regular users to the user home
+        exit();
+    }
+}
+
 require_once '../config/database.php'; // Include the DB connection
 
 // This part is for handling login logic if needed, else we'll handle it via AJAX
@@ -25,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Redirect based on role
             if ($user['role'] == 'admin') {
-                echo json_encode(['status' => 'success', 'message' => 'Login successful', 'redirect' => '/admin/admin-dashboard.php']);
+                echo json_encode(['status' => 'success', 'message' => 'Login successful', 'redirect' => '../admin/admin-dashboard.php']);
             } else {
-                echo json_encode(['status' => 'success', 'message' => 'Login successful', 'redirect' => '/user/home.php']);
+                echo json_encode(['status' => 'success', 'message' => 'Login successful', 'redirect' => '../user/home.php']);
             }
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Invalid credentials.']);
