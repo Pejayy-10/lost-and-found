@@ -1,24 +1,32 @@
 <?php
 
-// Database configuration
-define('DB_HOST', 'localhost');        // Database host
-define('DB_NAME', 'lost_and_found');   // Database name
-define('DB_USER', 'root');             // Database username
-define('DB_PASS', '');                 // Database password (use your own)
+class Database
+{
+    private $host = 'localhost'; // Replace with your host
+    private $db_name = 'lost_and_found'; // Replace with your database name
+    private $username = 'root'; // Replace with your database username
+    private $password = ''; // Replace with your database password
+    private $conn;
 
-// PDO connection setup
-try {
-    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
-    $options = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
-    ];
-    $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
-    // echo "Connection successful!";
-} catch (PDOException $e) {
-    // Handle connection error
-    die("Database connection failed: " . $e->getMessage());
+    // Connect to the database
+    public function connect()
+    {
+        $this->conn = null;
+
+        try {
+            $this->conn = new PDO(
+                "mysql:host={$this->host};dbname={$this->db_name}",
+                $this->username,
+                $this->password
+            );
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Database Connection Error: " . $e->getMessage());
+        }
+
+        return $this->conn;
+    }
 }
 
 ?>

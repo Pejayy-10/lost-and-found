@@ -15,7 +15,7 @@ $uri .= $_SERVER['HTTP_HOST'];
 $uri .= $_SERVER["REQUEST_URI"];
 
 // Redirect to the 'login' page by appending 'login' to the URI
-header('Location: ' . $uri . "auth/login.php");
+header('Location: ' . $uri . "main.php");
 
 // Ensure no further code is executed after the redirect
 exit;
